@@ -1,128 +1,91 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Franklin & Eastern Test (2000ft)</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        text-align: center;
-        padding: 40px;
-        background-color: #f4f4f4;
-      }
-      #musicPlayer {
-        display: none;
-        margin-top: 20px;
-      }
-      .player-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-        height: 344px;
-        margin: auto;
-      }
-      .player-wrapper iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 24px;
-      }
-      .overlay-block {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-      }
-      #message {
-        font-size: 18px;
-        color: #333;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Franklin & Eastern Test</h1>
-    <div id="message">Checking your location...</div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      text-align: center;
+    }
+    #message {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    i.album-title {
+      font-style: italic;
+    }
+    iframe {
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      height: 344px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="message"></div>
+  <div id="player" style="display:none;">
+    <iframe 
+      src="https://untitled.stream/embed/ePyp2AMobuoJ" 
+      allowfullscreen 
+      allow="picture-in-picture" 
+      loading="lazy">
+    </iframe>
+  </div>
 
-    <div id="musicPlayer">
-      <div class="player-wrapper">
-        <iframe
-          src="https://untitled.stream/embed/ePyp2AMobuoJ"
-          allowfullscreen
-          allow="picture-in-picture"
-          loading="lazy">
-        </iframe>
-        <div class="overlay-block"></div>
-      </div>
-    </div>
+  <script>
+    const prospectParkCenter = { lat: 40.6602, lng: -73.9690 };
+    const radiusMeters = 914; // 3000 feet in meters
 
-    <script>
-      const targetLat = 40.670285;
-      const targetLng = -73.95643;
-      const maxDistanceFeet = 2000;
-
-      function toRad(value) {
-        return (value * Math.PI) / 180;
+    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+      function deg2rad(deg) {
+        return deg * (Math.PI / 180);
       }
+      const R = 6371000; // Radius of the earth in meters
+      const dLat = deg2rad(lat2 - lat1);
+      const dLon = deg2rad(lon2 - lon1);
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
 
-      function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371000;
-        const φ1 = toRad(lat1);
-        const φ2 = toRad(lat2);
-        const Δφ = toRad(lat2 - lat1);
-        const Δλ = toRad(lon2 - lon1);
-        const a =
-          Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distanceMeters = R * c;
-        return distanceMeters * 3.28084;
+    function showMessage(text) {
+      const msg = document.getElementById("message");
+      msg.innerHTML = text;
+    }
+
+    function init() {
+      if (!navigator.geolocation) {
+        showMessage("Geolocation is not supported by your browser.");
+        return;
       }
 
-      function checkLocation(position) {
+      navigator.geolocation.getCurrentPosition(position => {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
-        const distance = getDistance(userLat, userLng, targetLat, targetLng);
-        const message = document.getElementById("message");
-        const player = document.getElementById("musicPlayer");
+        const distance = getDistanceFromLatLonInMeters(userLat, userLng, prospectParkCenter.lat, prospectParkCenter.lng);
 
-        if (distance <= maxDistanceFeet) {
-          message.textContent = "You're in the zone — enjoy the music.";
-          player.style.display = "block";
+        if (distance <= radiusMeters) {
+          showMessage(`Please enjoy and let me know what you think. <i class="album-title">Paradise, destruction</i> will be released on July 18th.<br>Thanks, Jesse`);
+          document.getElementById("player").style.display = "block";
         } else {
-          message.textContent =
-            "You are not close enough. This music is only available near Franklin & Eastern.";
-          player.style.display = "none";
+          showMessage(`You are not close enough. You must be within Prospect Park to listen to <i class="album-title">Paradise, destruction</i>. The album will be released on July 18th.<br>Thanks, Jesse`);
+          document.getElementById("player").style.display = "none";
         }
-      }
-
-      function showError(error) {
-        const message = document.getElementById("message");
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            message.textContent = "Please allow location access to play music.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            message.textContent = "Location information is unavailable.";
-            break;
-          case error.TIMEOUT:
-            message.textContent = "Location request timed out.";
-            break;
-          default:
-            message.textContent = "An unknown error occurred.";
-            break;
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(checkLocation, showError);
-        } else {
-          document.getElementById("message").textContent =
-            "Geolocation is not supported by this browser.";
-        }
+      }, () => {
+        showMessage("Unable to retrieve your location.");
       });
-    </script>
-  </body>
+    }
+
+    window.onload = init;
+  </script>
+</body>
 </html>
