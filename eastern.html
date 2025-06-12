@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prospect Park Music Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 40px;
+        background-color: #f4f4f4;
+      }
+      #musicPlayer {
+        display: none;
+        margin-top: 20px;
+      }
+      iframe {
+        max-width: 600px;
+        width: 100%;
+        border: none;
+        border-radius: 24px;
+      }
+      #message {
+        font-size: 18px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Prospect Park Music</h1>
+    <div id="message">Checking your location...</div>
+
+    <div id="musicPlayer">
+      <iframe
+        src="https://untitled.stream/embed/ePyp2AMobuoJ"
+        height="344"
+        allowfullscreen
+        allow="picture-in-picture"
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <script>
+      function checkLocation() {
+        const userLat = 40.670285;
+        const userLng = -73.95643;
+
+        const bounds = {
+          north: 40.6715,
+          south: 40.6602,
+          west: -73.9730,
+          east: -73.9680
+        };
+
+        const inside =
+          userLat <= bounds.north &&
+          userLat >= bounds.south &&
+          userLng >= bounds.west &&
+          userLng <= bounds.east;
+
+        const message = document.getElementById("message");
+        const player = document.getElementById("musicPlayer");
+
+        if (inside) {
+          message.textContent = "Welcome to Prospect Park. Enjoy the music.";
+          player.style.display = "block";
+        } else {
+          message.textContent = "This music is only available in Prospect Park.";
+          player.style.display = "none";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        checkLocation();
+      });
+    </script>
+  </body>
+</html>
