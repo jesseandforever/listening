@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Prospect Park Music</title>
+    <title>Test Location Music</title>
     <style>
       body {
         font-family: sans-serif;
@@ -28,7 +27,7 @@
     </style>
   </head>
   <body>
-    <h1>Prospect Park Music</h1>
+    <h1>Franklin & Eastern Test</h1>
     <div id="message">Checking your location...</div>
 
     <div id="musicPlayer">
@@ -42,46 +41,78 @@
     </div>
 
     <script>
+      const targetLat = 40.670285;
+      const targetLng = -73.95643;
+      const maxDistanceFeet = 100;
+
+      function toRad(value) {
+        return (value * Math.PI) / 180;
+      }
+
+      function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Radius of Earth in meters
+        const φ1 = toRad(lat1);
+        const φ2 = toRad(lat2);
+        const Δφ = toRad(lat2 - lat1);
+        const Δλ = toRad(lon2 - lon1);
+
+        const a =
+          Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+          Math.cos(φ1) *
+            Math.cos(φ2) *
+            Math.sin(Δλ / 2) *
+            Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distanceMeters = R * c;
+        return distanceMeters * 3.28084; // convert to feet
+      }
+
       function checkLocation(position) {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
 
-        const bounds = {
-          north: 40.6715,
-          south: 40.6602,
-          west: -73.9730,
-          east: -73.9680
-        };
-
-        const inside =
-          userLat <= bounds.north &&
-          userLat >= bounds.south &&
-          userLng >= bounds.west &&
-          userLng <= bounds.east;
+        const distance = getDistance(userLat, userLng, targetLat, targetLng);
 
         const message = document.getElementById("message");
         const player = document.getElementById("musicPlayer");
 
-        if (inside) {
-          message.textContent = "Welcome to Prospect Park. Enjoy the music.";
+        if (distance <= maxDistanceFeet) {
+          message.textContent = "You're in the zone — enjoy the music.";
           player.style.display = "block";
         } else {
-          message.textContent = "This music is only available in Prospect Park.";
+          message.textContent =
+            "You are not close enough. This music is only available near Franklin & Eastern.";
           player.style.display = "none";
         }
       }
 
-      function locationError(error) {
-        document.getElementById("message").textContent =
-          "Location access denied or unavailable.";
+      function showError(error) {
+        const message = document.getElementById("message");
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            message.textContent = "Please allow location access to play music.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            message.textContent = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            message.textContent = "Location request timed out.";
+            break;
+          default:
+            message.textContent = "An unknown error occurred.";
+            break;
+        }
       }
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(checkLocation, locationError);
-      } else {
-        document.getElementById("message").textContent =
-          "Geolocation is not supported by this browser.";
-      }
+      document.addEventListener("DOMContentLoaded", () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(checkLocation, showError);
+        } else {
+          document.getElementById("message").textContent =
+            "Geolocation is not supported by this browser.";
+        }
+      });
     </script>
   </body>
 </html>
