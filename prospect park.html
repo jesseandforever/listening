@@ -1,120 +1,99 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.65">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    span.s1 {font: 12.0px 'Apple Color Emoji'}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      line-height: 1.6;
+    }
+    #message {
+      margin-bottom: 1em;
+    }
+    #musicPlayer, #mc_embed_signup {
+      display: none;
+      margin-top: 1em;
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Prospect Park Music&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 40px auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>#musicPlayer, #outsideMessage {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>iframe {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 24px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 344px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 12px 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid #333;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #eee;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: background-color 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button:hover {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #ddd;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>#debugLocation {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #555;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Prospect Park Music&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="getLocationButton"&gt;Get My Location&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;p id="debugLocation"&gt;&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="musicPlayer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;<span class="s1">🎵</span> You are inside Prospect Park! Enjoy the music:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;iframe</p>
-<p class="p1"><span class="Apple-converted-space">      </span>src="https://untitled.stream/embed/ePyp2AMobuoJ"</p>
-<p class="p1"><span class="Apple-converted-space">      </span>allowfullscreen</p>
-<p class="p1"><span class="Apple-converted-space">      </span>allow="picture-in-picture"</p>
-<p class="p1"><span class="Apple-converted-space">      </span>loading="lazy"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&gt;&lt;/iframe&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="outsideMessage"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;This music is only available in Prospect Park.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const prospectParkBounds = {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>north: 40.6715,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>south: 40.6602,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>west: -73.9730,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>east: -73.9680</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('getLocationButton').addEventListener('click', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if ('geolocation' in navigator) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>navigator.geolocation.getCurrentPosition(position =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const lat = position.coords.latitude;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const lng = position.coords.longitude;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>document.getElementById('debugLocation').textContent = `Latitude: ${lat.toFixed(6)}, Longitude: ${lng.toFixed(6)}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (</p>
-<p class="p1"><span class="Apple-converted-space">            </span>lat &lt;= prospectParkBounds.north &amp;&amp;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>lat &gt;= prospectParkBounds.south &amp;&amp;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>lng &gt;= prospectParkBounds.west &amp;&amp;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>lng &lt;= prospectParkBounds.east</p>
-<p class="p1"><span class="Apple-converted-space">          </span>) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('musicPlayer').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('outsideMessage').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">          </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('musicPlayer').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('outsideMessage').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, error =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>document.getElementById('debugLocation').textContent = `Error: ${error.message}`;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>document.getElementById('musicPlayer').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">          </span>document.getElementById('outsideMessage').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('debugLocation').textContent = 'Geolocation is not supported by your browser.';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('musicPlayer').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('outsideMessage').style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div id="message">Detecting your location...</div>
+  <div id="mc_embed_signup">
+    <form action="https://gmail.us3.list-manage.com/subscribe/post?u=e80a5b327878746fda982229d&amp;id=0d42e449d5&amp;f_id=007a34e2f0" method="post" target="_blank" onsubmit="onSubscribe()" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate">
+      <h2>Subscribe to listen</h2>
+      <div class="mc-field-group">
+        <label for="mce-EMAIL">Email Address <span class="asterisk">*</span></label>
+        <input type="email" name="EMAIL" class="required email" id="mce-EMAIL" required>
+      </div>
+      <div class="mc-field-group">
+        <label for="mce-FNAME">First Name</label>
+        <input type="text" name="FNAME" id="mce-FNAME">
+      </div>
+      <div class="mc-field-group">
+        <label for="mce-LNAME">Last Name</label>
+        <input type="text" name="LNAME" id="mce-LNAME">
+      </div>
+      <div hidden><input type="hidden" name="tags" value="10813796"></div>
+      <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+    </form>
+  </div>
+  <div id="musicPlayer">
+    <iframe style="border-radius: 24px" src="https://untitled.stream/embed/ePyp2AMobuoJ" width="100%" height="344" allowfullscreen allow="picture-in-picture" frameborder="0" loading="lazy"></iframe>
+  </div>
+
+  <script>
+    const centerLat = 40.6602;
+    const centerLng = -73.9690;
+    const radiusFeet = 5000;
+    const feetToMeters = 0.3048;
+    const radiusMeters = radiusFeet * feetToMeters;
+
+    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function onSubscribe() {
+      document.getElementById("mc_embed_signup").style.display = "none";
+      document.getElementById("musicPlayer").style.display = "block";
+      document.getElementById("message").innerHTML = "<em>Paradise, destruction</em> is now streaming. Thanks, Jesse.";
+    }
+
+    function init() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          const distance = getDistanceFromLatLonInMeters(userLat, userLng, centerLat, centerLng);
+          const message = document.getElementById("message");
+
+          if (distance <= radiusMeters) {
+            message.innerHTML = "Please enjoy and let me know what you think. <em>Paradise, destruction</em> will be released on July 18th.<br>Thanks, Jesse.";
+            document.getElementById("mc_embed_signup").style.display = "block";
+          } else {
+            message.innerHTML = "You are not close enough. You must be within Prospect Park to listen to <em>Paradise, destruction</em>. The album will be released on July 18th.<br>Thanks, Jesse.";
+          }
+        }, () => {
+          document.getElementById("message").innerText = "Location permission denied.";
+        });
+      } else {
+        document.getElementById("message").innerText = "Geolocation is not supported by your browser.";
+      }
+    }
+
+    window.onload = init;
+  </script>
 </body>
 </html>
