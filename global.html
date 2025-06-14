@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title> <!-- No title as requested -->
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background: #f7f7f7;
+    }
+    #message {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    iframe {
+      border-radius: 24px;
+      width: 100%;
+      max-width: 660px;
+      height: 344px;
+      border: none;
+      display: none; /* Hidden by default */
+    }
+  </style>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NWJM97ZVQ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NWJM97ZVQ2');
+  </script>
+</head>
+<body>
+  <div id="message">
+    Checking your location...
+  </div>
+  <iframe id="musicPlayer" src="https://untitled.stream/embed/ePyp2AMobuoJ" allowfullscreen allow="picture-in-picture" loading="lazy"></iframe>
+
+  <script>
+    const locations = [
+      { name: "Prospect Park", lat: 40.6602, lon: -73.9690, radius: 5000 },
+      { name: "Sheep Meadow", lat: 40.7725, lon: -73.9766, radius: 1200 },
+      { name: "Golden Gate Park", lat: 37.7694, lon: -122.4862, radius: 5000 },
+      { name: "Griffith Park", lat: 34.1366, lon: -118.2942, radius: 6000 },
+      { name: "Lincoln Park", lat: 41.9214, lon: -87.6513, radius: 4000 },
+      { name: "Mount Royal Park", lat: 45.5045, lon: -73.5879, radius: 3000 },
+      { name: "Chapultepec Park", lat: 19.4204, lon: -99.1825, radius: 5000 },
+      { name: "Ipanema Beach", lat: -22.9846, lon: -43.2048, radius: 3000 },
+      { name: "Tuileries Gardens", lat: 48.8635, lon: 2.3270, radius: 1000 },
+      { name: "Hyde Park", lat: 51.5074, lon: -0.1657, radius: 4000 },
+      { name: "Park Güell", lat: 41.4145, lon: 2.1527, radius: 1200 },
+      { name: "Showa Kinen Park", lat: 35.7074, lon: 139.3931, radius: 5000 },
+      { name: "Royal Park", lat: -37.7815, lon: 144.9510, radius: 3000 },
+      { name: "Delta Park", lat: -26.1214, lon: 28.0154, radius: 3000 }
+    ];
+
+    const messageDiv = document.getElementById('message');
+    const player = document.getElementById('musicPlayer');
+
+    function getDistanceMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // meters
+      const toRad = angle => angle * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2)**2 +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function checkLocation(position) {
+      const { latitude, longitude } = position.coords;
+      let insideAny = false;
+
+      for (const park of locations) {
+        const dist = getDistanceMeters(latitude, longitude, park.lat, park.lon);
+        if (dist <= park.radius) {
+          insideAny = true;
+          break;
+        }
+      }
+
+      if (insideAny) {
+        messageDiv.innerHTML = `Please enjoy and let me know what you think. <em>Paradise, destruction</em> will be released on July 18th.<br><br>Thanks, Jesse`;
+        player.style.display = 'block';
+        gtag('event', 'stream_access', {
+          'event_category': 'Location',
+          'event_label': 'Inside radius'
+        });
+      } else {
+        messageDiv.innerHTML = `You are not close enough. You must be within one of the selected listening locations to hear <em>Paradise, destruction</em>. The album will be released on July 18th.<br><br>Thanks, Jesse`;
+        player.style.display = 'none';
+      }
+    }
+
+    function handleError() {
+      messageDiv.textContent = "Unable to get your location. Please enable location services and refresh.";
+      player.style.display = 'none';
+    }
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(checkLocation, handleError);
+    } else {
+      handleError();
+    }
+  </script>
+</body>
+</html>
