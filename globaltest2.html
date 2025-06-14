@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 1em;
+    line-height: 1.5;
+    background: #f7f7f7;
+    color: #222;
+  }
+  em {
+    font-style: italic;
+  }
+  #message {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+  }
+  #player {
+    border-radius: 24px;
+    width: 100%;
+    height: 344px;
+    border: none;
+    display: none;
+  }
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NWJM97ZVQ2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NWJM97ZVQ2');
+</script>
+</head>
+<body>
+
+<div id="message"></div>
+
+<iframe
+  id="player"
+  src="https://untitled.stream/embed/ePyp2AMobuoJ"
+  allowfullscreen=""
+  allow="picture-in-picture"
+  loading="lazy"
+></iframe>
+
+<script>
+  const parks = [
+    { name: "Prospect Park, Brooklyn", lat: 40.660204, lon: -73.968956, radiusFeet: 5000 },
+    { name: "Sheep Meadow, Central Park, Manhattan", lat: 40.771133, lon: -73.974187, radiusFeet: 2000 },
+    { name: "Golden Gate Park, San Francisco", lat: 37.769420, lon: -122.486213, radiusFeet: 9000 },
+    { name: "Griffith Park, Los Angeles", lat: 34.136554, lon: -118.294200, radiusFeet: 15000 },
+    { name: "Lincoln Park, Chicago", lat: 41.921438, lon: -87.651304, radiusFeet: 6000 },
+    { name: "Mount Royal Park, Montreal", lat: 45.5048, lon: -73.5878, radiusFeet: 7000 },
+    { name: "Chapultepec Park, Mexico City", lat: 19.4200, lon: -99.1817, radiusFeet: 6000 },
+    { name: "Ipanema Beach, Rio de Janeiro", lat: -22.9859, lon: -43.2022, radiusFeet: 1500 },
+    { name: "Tuileries Gardens, Paris", lat: 48.8635, lon: 2.3270, radiusFeet: 2500 },
+    { name: "Hyde Park, London", lat: 51.507268, lon: -0.165730, radiusFeet: 6000 },
+    { name: "Park Güell, Barcelona", lat: 41.414494, lon: 2.152694, radiusFeet: 2000 },
+    { name: "Showa Kinen Park, Tokyo", lat: 35.6938, lon: 139.4121, radiusFeet: 9000 },
+    { name: "Royal Park, Melbourne", lat: -37.7850, lon: 144.9561, radiusFeet: 3000 },
+    { name: "Delta Park, Johannesburg, South Africa", lat: -26.1140, lon: 28.0056, radiusFeet: 4000 }
+  ];
+
+  const messageEl = document.getElementById("message");
+  const playerEl = document.getElementById("player");
+
+  // Haversine formula to get distance in feet
+  function getDistanceFeet(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // metres
+    const toRad = (deg) => deg * Math.PI / 180;
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    const meters = R * c;
+    const feet = meters * 3.28084;
+    return feet;
+  }
+
+  function showNotCloseMessage(closestParkName) {
+    messageEl.innerHTML = `You are not close enough. You must be within <strong>${closestParkName}</strong> to listen to <em>Paradise, destruction</em>. The album will be released on July 18th.<br>Thanks, Jesse`;
+    playerEl.style.display = "none";
+  }
+
+  function showMusicMessage(parkName) {
+    messageEl.innerHTML = `Please enjoy and let me know what you think. <em>Paradise, destruction</em> will be released on July 18th.<br>Thanks, Jesse`;
+    playerEl.style.display = "block";
+  }
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const userLat = pos.coords.latitude;
+        const userLon = pos.coords.longitude;
+
+        // Check if user is inside any park radius
+        let insidePark = false;
+        let insideParkName = "";
+        let closestPark = null;
+        let closestDistance = Infinity;
+
+        parks.forEach(park => {
+          const dist = getDistanceFeet(userLat, userLon, park.lat, park.lon);
+          if (dist < park.radiusFeet) {
+            insidePark = true;
+            insideParkName = park.name;
+          }
+          if (dist < closestDistance) {
+            closestDistance = dist;
+            closestPark = park.name;
+          }
+        });
+
+        if (insidePark) {
+          showMusicMessage(insideParkName);
+        } else {
+          showNotCloseMessage(closestPark);
+        }
+      },
+      (err) => {
+        messageEl.textContent = "Geolocation permission denied or unavailable.";
+        playerEl.style.display = "none";
+      }
+    );
+  } else {
+    messageEl.textContent = "Geolocation is not supported b
