@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<style>
+  #player { display: none; }
+  #inside-message, #outside-message { font-size: 1.2em; margin: 20px; }
+</style>
+<script>
+  // Coordinates and radii (in meters) of parks
+  const parks = [
+    { name: "Prospect Park", lat: 40.660204, lon: -73.968956, radius: 1524 }, // 5000 feet = 1524m approx
+    { name: "Sheep Meadow, Central Park", lat: 40.771133, lon: -73.974187, radius: 500 },
+    { name: "Golden Gate Park", lat: 37.769421, lon: -122.486214, radius: 2500 },
+    // Add other parks here...
+  ];
+
+  function toRadians(deg) {
+    return deg * Math.PI / 180;
+  }
+
+  // Haversine formula to compute distance in meters between two points
+  function getDistanceMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Earth radius in meters
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function checkLocation(position) {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+    console.log(`User location: ${userLat}, ${userLon}`);
+
+    let insideAnyPark = false;
+    let insideParkName = "";
+
+    for (const park of parks) {
+      const dist = getDistanceMeters(userLat, userLon, park.lat, park.lon);
+      console.log(`Distance to ${park.name}: ${dist.toFixed(2)}m (radius: ${park.radius}m)`);
+      if (dist <= park.radius) {
+        insideAnyPark = true;
+        insideParkName = park.name;
+        break;
+      }
+    }
+
+    const insideMsg = document.getElementById("inside-message");
+    const outsideMsg = document.getElementById("outside-message");
+    const player = document.getElementById("player");
+
+    if (insideAnyPark) {
+      insideMsg.textContent = `Please enjoy and let me know what you think. Paradise, destruction will be released on July 18th. Thanks, Jesse — You are inside ${insideParkName}.`;
+      insideMsg.style.display = "block";
+      outsideMsg.style.display = "none";
+      player.style.display = "block";
+    } else {
+      insideMsg.style.display = "none";
+      outsideMsg.style.display = "block";
+      player.style.display = "none";
+    }
+  }
+
+  function locationError(err) {
+    alert("Error getting location: " + err.message);
+  }
+
+  window.onload = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(checkLocation, locationError);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
+</script>
+</head>
+<body>
+
+<div id="outside-message" style="display:none; font-size:1.2em; margin: 20px;">
+  You are not close enough. You must be within one of the designated parks to listen to <em>Paradise, destruction</em>. The album will be released on July 18th. Thanks, Jesse
+</div>
+
+<div id="inside-message" style="display:none;"></div>
+
+<div id="player" style="margin: 20px 0;">
+  <iframe style="border-radius: 24px" src="https://untitled.stream/embed/ePyp2AMobuoJ" width="100%" height="344" allowFullScreen allow="picture-in-picture" frameborder="0" loading="lazy"></iframe>
+</div>
+
+</body>
+</html>
