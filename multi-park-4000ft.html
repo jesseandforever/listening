@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NWJM97ZVQ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{ dataLayer.push(arguments); }}
+    gtag('js', new Date());
+    gtag('config', 'G-NWJM97ZVQ2');
+  </script>
+  <style>
+    body {{ font-family: sans-serif; padding: 20px; text-align: center; }}
+    #message {{ font-size: 1.2em; margin-bottom: 20px; }}
+    iframe {{ display: none; border-radius: 24px; width: 100%; max-width: 560px; height: 344px; }}
+  </style>
+</head>
+<body>
+  <div id="message">Detecting your location...</div>
+  <iframe id="player" src="https://untitled.stream/embed/ePyp2AMobuoJ" allowfullscreen allow="picture-in-picture" frameborder="0" loading="lazy"></iframe>
+  <script>
+    const locations = [
+      {{ name: "Prospect Park", lat: 40.6602, lng: -73.9690, radius: 4000 }},
+      {{ name: "Sheep Meadow", lat: 40.7712, lng: -73.9742, radius: 2400 }},
+      {{ name: "Golden Gate Park", lat: 37.7694, lng: -122.4862, radius: 3600 }},
+      {{ name: "Griffith Park", lat: 34.1366, lng: -118.2942, radius: 4000 }},
+      {{ name: "Lincoln Park", lat: 41.9214, lng: -87.6513, radius: 2800 }},
+      {{ name: "Mount Royal Park", lat: 45.5048, lng: -73.5878, radius: 2400 }},
+      {{ name: "Chapultepec Park", lat: 19.4204, lng: -99.1810, radius: 3200 }},
+      {{ name: "Ipanema Beach", lat: -22.9836, lng: -43.2048, radius: 2400 }},
+      {{ name: "Tuileres Gardens", lat: 48.8638, lng: 2.3270, radius: 1600 }},
+      {{ name: "Hyde Park", lat: 51.5073, lng: -0.1657, radius: 2800 }},
+      {{ name: "Park Güell", lat: 41.4145, lng: 2.1527, radius: 1600 }},
+      {{ name: "Showa Kinen Park", lat: 35.7138, lng: 139.3946, radius: 2800 }},
+      {{ name: "Royal Park", lat: -37.7813, lng: 144.9510, radius: 2000 }},
+      {{ name: "Delta Park", lat: -26.1334, lng: 28.0161, radius: 2400 }}
+    ];
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // meters
+      const toRad = deg => deg * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) ** 2 +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon/2) ** 2;
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      let found = false;
+      for (const loc of locations) {
+        const dist = haversine(latitude, longitude, loc.lat, loc.lng);
+        if (dist <= loc.radius) {
+          document.getElementById("message").innerHTML =
+            'Please enjoy and let me know what you think. <i>Paradise, destruction</i> will be released on July 18th.<br>Thanks, Jesse';
+          document.getElementById("player").style.display = "block";
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        document.getElementById("message").innerHTML =
+          'You are not close enough. You must be within a participating park to listen to <i>Paradise, destruction</i>. The album will be released on July 18th.<br>Thanks, Jesse';
+      }
+    }, () => {
+      document.getElementById("message").textContent = "Could not access your location.";
+    });
+  </script>
+</body>
+</html>
