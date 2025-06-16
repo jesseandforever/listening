@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NWJM97ZVQ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NWJM97ZVQ2');
+  </script>
+</head>
+<body>
+  <div id="status">Detecting your location...</div>
+  <div id="player" style="display:none;">
+    <iframe style="border-radius: 24px" src="https://untitled.stream/embed/ePyp2AMobuoJ" width="100%" height="344" allowfullscreen allow="picture-in-picture" frameborder="0" loading="lazy"></iframe>
+  </div>
+  <script>
+    const locations = [
+      { name: "Prospect Park", lat: 40.6602, lon: -73.9690, radius: 3500 },
+      { name: "Sheep Meadow", lat: 40.7712, lon: -73.9742, radius: 2500 },
+      { name: "Golden Gate Park", lat: 37.7694, lon: -122.4862, radius: 4000 },
+      { name: "Griffith Park", lat: 34.1366, lon: -118.2942, radius: 4200 },
+      { name: "Lincoln Park", lat: 41.9214, lon: -87.6513, radius: 3500 },
+      { name: "Mount Royal Park", lat: 45.5048, lon: -73.5878, radius: 3000 },
+      { name: "Chapultepec Park", lat: 19.4204, lon: -99.1810, radius: 4500 },
+      { name: "Ipanema Beach", lat: -22.9847, lon: -43.2048, radius: 3000 },
+      { name: "Tuileres Gardens", lat: 48.8638, lon: 2.3270, radius: 1500 },
+      { name: "Hyde Park", lat: 51.5073, lon: -0.1657, radius: 3500 },
+      { name: "Park Güell", lat: 41.4145, lon: 2.1527, radius: 1500 },
+      { name: "Showa Kinen Park", lat: 35.7138, lon: 139.3946, radius: 3500 },
+      { name: "Royal Park", lat: -37.7833, lon: 144.9500, radius: 2500 },
+      { name: "Delta Park", lat: -26.1209, lon: 28.0019, radius: 3000 }
+    ];
+    const status = document.getElementById("status");
+    const player = document.getElementById("player");
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const toRad = x => x * Math.PI / 180;
+      const R = 6371000;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      let found = false;
+      for (let park of locations) {
+        if (getDistance(latitude, longitude, park.lat, park.lon) <= park.radius) {
+          status.innerHTML = "Please enjoy and let me know what you think. <em>Paradise, destruction</em> will be released on July 18th.<br>Thanks, Jesse";
+          player.style.display = "block";
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        status.innerHTML = "You are not close enough. You must be within one of the listed locations to listen to <em>Paradise, destruction</em>. The album will be released on July 18th.<br>Thanks, Jesse";
+      }
+    }, () => {
+      status.innerHTML = "Location access is required to determine if you're near a listening location.";
+    });
+  </script>
+</body>
+</html>
