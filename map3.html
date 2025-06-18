@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Paradise, destruction Listening Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Proxima Nova', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+      }
+      #map-container {
+        position: relative;
+        width: 70%;
+        height: 90vh;
+        margin: 0 auto;
+        border: 8px solid #d2b48c;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+        pointer-events: none; /* Disable interaction initially */
+      }
+      .leaflet-container a {
+        color: #8c6d3f;
+      }
+      #map-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255, 255, 255, 0.9); /* 90% opacity */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        color: #333;
+        cursor: pointer;
+        user-select: none;
+        text-align: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map-container">
+      <div id="map"></div>
+      <div id="map-overlay">Tap to interact with map</div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      var map = L.map('map', {
+        dragging: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        tap: false,
+        touchZoom: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      var customIcon = L.icon({
+        iconUrl: 'https://static.wixstatic.com/media/e9bf4e_892589f4570441649ee621809cb3cfd9~mv2.png',
+        iconSize: [60, 80],
+        iconAnchor: [30, 80],
+        popupAnchor: [0, -70]
+      });
+
+      var locations = [
+        { name: "Prospect Park, Brooklyn", coords: [40.6602, -73.9690] },
+        { name: "Sheep Meadow, Central Park, Manhattan", coords: [40.7712, -73.9742] },
+        { name: "Golden Gate Park, San Francisco", coords: [37.7694, -122.4862] },
+        { name: "Griffith Park, Los Angeles", coords: [34.1366, -118.2942] },
+        { name: "Lincoln Park, Chicago", coords: [41.9214, -87.6513] },
+        { name: "Mount Royal Park, Montreal", coords: [45.5048, -73.5878] },
+        { name: "Chapultepec Park, Mexico City", coords: [19.4204, -99.1819] },
+        { name: "Ipanema Beach, Rio de Janeiro", coords: [-22.9846, -43.2048] },
+        { name: "Tuileries Gardens, Paris", coords: [48.8638, 2.3270] },
+        { name: "Hyde Park, London", coords: [51.5073, -0.1657] },
+        { name: "Park Güell, Barcelona", coords: [41.4145, 2.1527] },
+        { name: "Showa Kinen Park, Tokyo", coords: [35.7138, 139.3944] },
+        { name: "Royal Park, Melbourne", coords: [-37.7833, 144.9510] },
+        { name: "Delta Park, Johannesburg, South Africa", coords: [-26.1335, 28.0110] }
+      ];
+
+      var markers = locations.map(function(loc) {
+        return L.marker(loc.coords, { icon: customIcon }).bindPopup(loc.name);
+      });
+
+      var group = L.featureGroup(markers).addTo(map);
+      map.fitBounds(group.getBounds(), { padding: [20, 20] });
+
+      var overlay = document.getElementById('map-overlay');
+      var mapDiv = document.getElementById('map');
+
+      overlay.addEventListener('click', function() {
+        mapDiv.style.pointerE
