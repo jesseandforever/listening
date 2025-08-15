@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body { font-family: Arial, sans-serif; padding: 2rem; }
+  #message { margin-bottom: 1rem; }
+  #player { width: 100%; height: 344px; border-radius: 24px; }
+</style>
+<title>Ellington Location Experience</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NWJM97ZVQ2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NWJM97ZVQ2');
+</script>
+</head>
+<body>
+<div id="message">Detecting your location...</div>
+<div id="player-container"></div>
+
+<script>
+const songTitle = "Ellington";
+
+const locations = [
+  {name: "Runyon Canyon Park, Los Angeles", lat: 34.1053, lon: -118.3480, radius: 3500},
+  {name: "Notre-Dame Cathedral, Paris", lat: 48.852968, lon: 2.349902, radius: 900},
+  {name: "Senso-ji Temple, Tokyo", lat: 35.714765, lon: 139.796655, radius: 1000}
+];
+
+function distanceInFeet(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const meters = R * c;
+  const feet = meters * 3.28084;
+  return feet;
+}
+
+function getNearestLocation(userLat, userLon) {
+  let nearest = null;
+  let nearestDist = Infinity;
+  for (const loc of locations) {
+    const dist = distanceInFeet(userLat, userLon, loc.lat, loc.lon);
+    if (dist < loc.radius && dist < nearestDist) {
+      nearest = loc;
+      nearestDist = dist;
+    }
+  }
+  return nearest;
+}
+
+function createPlayer() {
+  const iframe = document.createElement("iframe");
+  iframe.style.borderRadius = "24px";
+  iframe.width = "100%";
+  iframe.height = "344";
+  iframe.allowFullscreen = true;
+  iframe.allow = "picture-in-picture";
+  iframe.frameBorder = "0";
+  iframe.loading = "lazy";
+  iframe.src = "https://untitled.stream/embed/RI6rMalGu5Af";
+  return iframe;
+}
+
+function updateMessageAndPlayer(location) {
+  const msgDiv = document.getElementById("message");
+  const playerContainer = document.getElementById("player-container");
+  playerContainer.innerHTML = "";
+
+  if (location) {
+    msgDiv.innerHTML = `At <b>${location.name}</b>, you are the first listener. The contract, however, has already been taken elsewhere.`;
+    playerContainer.appendChild(createPlayer());
+  } else {
+    msgDiv.textContent = "This song is locked to three locations in the world — and you’re not in one of them.";
+  }
+}
+
+if (!navigator.geolocation) {
+  document.getElementById("message").textContent = "Geolocation is not supported by your browser.";
+} else {
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const userLat = pos.coords.latitude;
+      const userLon = pos.coords.longitude;
+      const loc = getNearestLocation(userLat, userLon);
+      updateMessageAndPlayer(loc);
+
+      if(loc) {
+        gtag('event', 'listen', {
+          'event_category': 'location_access',
+          'event_label': loc.name,
+          'value': 1
+        });
+      }
+    },
+    err => {
+      document.getElementById("message").textContent = "Unable to retrieve your location.";
+    },
+    {enableHighAccuracy: true, timeout: 10000, maximumAge: 0}
+  );
+}
+</script>
+</body>
+</html>
